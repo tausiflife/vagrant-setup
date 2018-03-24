@@ -1,3 +1,11 @@
 ---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: change the state of vagrant private keys
+      file:
+        path: ../.vagrant/machines/default/virtualbox/private_key
+        mode: 0600
+
 - hosts: vagrant
   gather_facts: yes

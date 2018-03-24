@@ -1,0 +1,3 @@
+---
+- hosts: vagrant
+  gather_facts: yes

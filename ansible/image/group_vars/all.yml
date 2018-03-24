@@ -1,0 +1,5 @@
+packages_list:
+  - name: openjdk
+    version: 1.9
+  - name: oracle-xe
+    version: latest

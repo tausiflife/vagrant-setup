@@ -1,5 +1,9 @@
 packages_list:
-  - name: openjdk
-    version: 1.9
-  - name: oracle-xe
-    version: latest
+  - name: libaio
+  - name: bc
+  - name: flex
+  - name: net-tools
+  - name: java-1.8.0-openjdk
+  - name: curl
+  - name: wget
+  - name: unzip

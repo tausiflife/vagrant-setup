@@ -1,0 +1,7 @@
+---
+- name: install all the listed packages
+  yum:
+    name: "{{ item.name }}"
+    state: present
+  with_items:
+    - "{{ packages_list }}"

@@ -8,4 +8,8 @@
         mode: 0600
 
 - hosts: vagrant
-  gather_facts: yes
+  gather_facts: no
+  become: yes
+  become_method: sudo
+  roles:
+    - install-packages

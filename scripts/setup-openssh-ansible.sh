@@ -11,4 +11,3 @@ sudo apt-get update
 sudo apt-get install -y ansible
 echo "ansible installed!!!!!!!"
 sudo apt-get update
-~                              

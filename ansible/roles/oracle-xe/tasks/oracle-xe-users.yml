@@ -1,0 +1,37 @@
+---
+- name: add group
+  group:
+    name: "{{ oracle_group_name }}"
+    system: yes
+    state: present
+
+- file:
+    path: /u01/app
+    state: directory
+
+- name: add user
+  user:
+    name: "{{ oracle_user_name }}"
+    system: yes
+    group: "{{ oracle_group_name }}"
+    home: /u01/app/oracle
+    shell: /bin/bash
+    state: present
+
+- name: create oracle home directory
+  file:
+    path: /u01/app/oracle
+    owner: "{{ oracle_user_name }}"
+    group: "{{ oracle_group_name }}"
+    recurse: yes
+    state: directory
+
+- name: copy the rpm directory to tmp
+  copy:
+    src: "{{ item }}"
+    dest: /tmp/
+    owner: root
+    group: root
+    mode: 0755
+  with_fileglob:
+    - oracle-xe-*.rpm

@@ -1,0 +1,10 @@
+packages_list:
+  - curl
+  - wget
+  - openjdk-8-jdk
+  - unzip
+  - virtualbox
+
+
+install_oracle: true
+install_cassandra: false

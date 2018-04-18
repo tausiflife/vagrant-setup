@@ -1,0 +1,12 @@
+---
+oracle_http_port: 8090
+oracle_listener_port: 1521
+oracle_system_pwd: password123
+oracle_start_boot: y
+oracle_reconfigure: no
+oracle_user_name: oracle
+oracle_group_name: dba
+oracle_sid: XE
+oracle_test_pwd: changeit
+oracle_rpm_file_name: oracle-xe-11.2.0-1.0.x86_64.rpm
+remove_previous_installation: false

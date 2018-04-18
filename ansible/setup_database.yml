@@ -1,0 +1,8 @@
+---
+- hosts: oracle-database
+  serial: 1
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - {role: oracle-xe, when: install_oracle}

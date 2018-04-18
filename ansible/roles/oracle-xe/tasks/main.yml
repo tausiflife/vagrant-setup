@@ -1,0 +1,114 @@
+---
+
+- name: remove previous installation
+  include_tasks: remove-oracle-xe.yml
+  when: remove_previous_installation
+
+- name: include oracle user create tasks
+  include_tasks: oracle-xe-users.yml
+
+- name: include oracle-xe rpm to deb
+  include_tasks: oracle-xe-rpm2deb.yml
+
+- name: copy chconfig file
+  copy:
+    src: chkconfig
+    dest: /sbin/chkconfig
+    owner: root
+    group: root
+    mode: 0755
+
+- name: set kernel parameters
+  copy:
+    src: 60-oracle.conf
+    dest: /etc/sysctl.d/60-oracle.conf
+    mode: 0777
+
+- name: load kernel parameters
+  service:
+    name: procps
+    state: restarted
+    daemon_reload: no
+
+- name: copy the shm file
+  file:
+    src: S01shm_load
+    dest: /etc/rc2.d/S01shm_load
+    mode: 0755
+
+- name: create a awk soft symlink
+  command: "{{ item }}"
+  ignore_errors: true
+  with_items:
+    - ln -s /usr/bin/awk /bin/awk
+    - mkdir /var/lock/subsys
+    - touch /var/lock/subsys/listener
+
+- name: installing oracle xe
+  apt:
+    deb: /tmp/oracle-xe_11.2.0-2_amd64.deb
+    state: present
+  become: yes
+  become_user: root
+  become_method: sudo
+
+- name: create oracle configuration templete
+  template:
+    src: oracle-xe-conf.j2
+    dest: /tmp/oracle-xe.conf
+    owner: root
+    group: root
+    mode: 0755
+
+- name: configure oracle-xe
+  shell: /etc/init.d/oracle-xe configure < /tmp/oracle-xe.conf >> /tmp/oracle-xe.log
+
+- name: check if the oracle {{oracle_user_name}}'s bash profile is present
+  stat:
+    path: /u01/app/{{oracle_user_name}}/.bash_profile
+  register: oracle_bash_profile
+
+- name: create bash_profile if not exists
+  file:
+    path: /u01/app/{{oracle_user_name}}/.bash_profile
+    owner: "{{oracle_user_name}}"
+    group: "{{oracle_group_name}}"
+    state: touch
+  when: (not oracle_bash_profile.stat.exists)
+
+- name: add oracle home to bash profile
+  lineinfile:
+    dest: /u01/app/oracle/.bash_profile
+    line: ""
+    state: present
+  with_items:
+    - export ORACLE_HOME=/u01/app/oracle/product/11.2.0/xe
+    - export ORACLE_SID=XE
+    - export ORACLE_BASE=/u01/app/oracle
+    - export PATH=$ORACLE_HOME/bin:$PATH
+
+
+- name: check if .bashrc exists
+  stat:
+    path: /u01/app/oracle/.bashrc
+  register: bashrc
+
+- name: create .bashrc
+  file:
+    path: /u01/app/oracle/.bashrc
+    owner: "{{oracle_user_name}}"
+    group: "{{oracle_user_name}}"
+    state: touch
+  when: (not bashrc.stat.exists)
+
+- name: copy .bash_profile to .bashrc
+  lineinfile:
+    dest: /u01/app/oracle/.bashrc
+    line: "source ~/.bash_profile"
+    state: present
+
+- name: start
+  service:
+    name: oracle-xe
+    state: restarted
+    daemon_reload: no

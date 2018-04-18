@@ -1,15 +1,10 @@
 ---
-- hosts: localhost
+- hosts: packages-group
   gather_facts: no
   tasks:
-    - name: change the state of vagrant private keys
-      file:
-        path: ../.vagrant/machines/default/virtualbox/private_key
-        mode: 0600
-
-- hosts: vagrant
-  gather_facts: no
-  become: yes
-  become_method: sudo
-  roles:
-    - install-packages
+    - name: install common packages
+      apt:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - "{{packages_list}}"

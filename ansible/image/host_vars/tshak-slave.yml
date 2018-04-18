@@ -1,0 +1,5 @@
+packages_list:
+  - curl
+  - wget
+  - openjdk-8-jdk
+  - unzip

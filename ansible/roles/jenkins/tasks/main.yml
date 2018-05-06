@@ -1,0 +1,33 @@
+---
+- name: add in apt-key
+  apt_key:
+    state: present
+    url: "{{ jenkins_key_url }}"
+
+- name: add in the sources
+  shell: echo deb {{ jenkins_source_url }} | sudo tee /etc/apt/sources.list.d/jenkins.list
+
+
+- name: update cache
+  apt:
+    update_cache: yes
+
+- name: install jenkins package
+  apt:
+    name: jenkins
+    state: present
+
+- name: open the firewall ports
+  command: ufw allow {{ jenkins_port }}
+  become: yes
+
+- name: change the port to {{ jenkins_port }}
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: HTTP_PORT=8090
+    line: HTTP_PORT={{ jenkins_port }}
+
+- name: make sure the jenkins service is started
+  service:
+    name: jenkins
+    state: restarted

@@ -1,0 +1,2 @@
+jfrog_debian_source_url: https://jfrog.bintray.com/artifactory-debs
+jfrog_apt_key: https://bintray.com/user/downloadSubjectPublicKey?username=jfrog

@@ -1,0 +1,24 @@
+---
+- name: get the release of ubuntu
+  shell: lsb_release -c -s
+  register: distribution_version
+
+- name: add the apt key
+  apt_key:
+    url: "{{ jfrog_apt_key }}"
+    state: present
+
+- name: add to apt source
+  shell: echo "deb {{ jfrog_debian_source_url }} {{ distribution_version.stdout }} main" | sudo tee -a /etc/apt/sources.list.d/jfrog.list
+  creates: /etc/apt/sources.list.d/jfrog.list
+
+- name: system update and install jfrog oss
+  apt:
+    name: jfrog-artifactory-oss
+    state: present
+    update_cache: yes
+
+- name: restart the service
+  service:
+    name: artifactory
+    state: started

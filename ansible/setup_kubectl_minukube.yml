@@ -1,0 +1,25 @@
+---
+- hosts: tshak-master
+  serial: 1
+  gather_facts: no
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: ensure curl is present
+      apt:
+        name: curl
+        state: present
+
+    - name: install kubectl with curl
+      get_url:
+        url: https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64/kubectl
+        dest: /usr/bin/kubectl
+        mode: 0775
+
+    - name: install minikube with curl
+      get_url:
+        url: https://storage.googleapis.com/minikube/releases/v0.27.0/minikube-linux-amd64
+        dest: /usr/bin/minikube
+        mode: 0775
+    

@@ -3,3 +3,9 @@ packages_list:
   - wget
   - openjdk-8-jdk
   - unzip
+
+user_name: jenkins
+user_groups:
+  - sudo
+  - slaverootaccess
+user_id_rsa_path: id_rsa_jenkins.pub

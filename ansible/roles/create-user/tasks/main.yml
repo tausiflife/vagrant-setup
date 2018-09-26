@@ -1,0 +1,30 @@
+---
+
+- name: create user
+  user:
+    name: "{{ user_name }}"
+    groups: "{{ user_groups }}"
+
+- name: copy bashrc file
+  copy:
+    src: "{{ item }}"
+    dest: /home/{{ user_name }}
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: 644
+  with_items:
+    - .profile
+    - .bashrc
+
+- name: create .ssh directory
+  file:
+    path: /home/{{ user_name }}/.ssh/
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: 0700
+
+- name: copy the public key of the user into ssh directory
+  copy:
+    src: "{{ user_id_rsa_path }}"
+    dest: /home/{{ user_name }}/.ssh/authorized_keys

@@ -1,0 +1,28 @@
+---
+- name: add git user
+  user:
+    name: git
+    home: /home/git
+
+- name: download the package
+  get_url:
+    url: https://dl.gitea.io/gitea/1.4.0/gitea-1.4.0-linux-386
+    dest: /home/git/gitea
+    mode: 0770
+
+- name: copy gitea start script
+  copy:
+    src: start-gitea.sh
+    dest: /home/git/
+    mode: 0770
+
+- name: check if any gitea process is running already
+  stat:
+    path: /home/git/gitea.pid
+  register: pidfile
+
+- name: run gitea web
+  command: ./start-gitea.sh & echo $! > gitea.pid
+  args:
+    chdir: /home/git
+  when: not pidfile.stat.exists

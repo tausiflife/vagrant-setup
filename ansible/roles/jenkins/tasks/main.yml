@@ -7,15 +7,11 @@
 - name: add in the sources
   shell: echo deb {{ jenkins_source_url }} | sudo tee /etc/apt/sources.list.d/jenkins.list
 
-
-- name: update cache
-  apt:
-    update_cache: yes
-
 - name: install jenkins package
   apt:
     name: jenkins
     state: present
+    update_cache: yes
 
 - name: open the firewall ports
   command: ufw allow {{ jenkins_port }}

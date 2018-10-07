@@ -1,0 +1,31 @@
+---
+- name: download tomcat tar file
+  get_url:
+    url: http://apache.uib.no/tomcat/tomcat-9/v9.0.12/bin/apache-tomcat-9.0.12.tar.gz
+    dest: /tmp
+
+- name: make tomcat directory
+  file:
+    path: /media/tshak/BACKUP/tomcat/
+    state: directory
+    owner: tshak
+    group: docker
+    mode: 0770
+
+- name: unarchive tomcat tar
+  shell: tar xzvf /tmp/apache-tomcat-9.0.12.tar.gz -C /media/tshak/BACKUP/tomcat/ --strip-components=1
+
+- name: create unit file
+  template:
+    src: service.j2
+    dest: /etc/systemd/system/tomcat.service
+    owner: tshak
+    group: docker
+    mode: 0770
+
+- name: systemctl daemon reload
+  service:
+    name: tomcat
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

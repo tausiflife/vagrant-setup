@@ -10,7 +10,7 @@
     src: "{{ item }}"
     dest: /home/{{ user_name }}
     owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    group: root
     mode: 644
   with_items:
     - .profile
